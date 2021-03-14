@@ -146,7 +146,7 @@ namespace FiguresDotStore.Controllers
 
 		// хотим оформить заказ и получить в ответе его стоимость
 		[HttpPost]
-		// zagidullin.ra: async нужен ? 
+		// zagidullin.ra: async тут ни к чему, Все синхронно.
 		public async Task<ActionResult> Order(Cart cart)
 		{
 			foreach (var position in cart.Positions)
@@ -180,13 +180,13 @@ namespace FiguresDotStore.Controllers
 			foreach (var position in cart.Positions)
 			{
 				// zagidullin.ra: К этому моменту могли уже все разобрать. После (FiguresStorage.CheckIfAvailable(position.Type, position.Count))
-				// zagidullin.ra: Так как необходим только весь заказ целиком, то стоит написать метод ReserveIfAvailable на транзакциях.
+				// zagidullin.ra: Необходим только весь заказ целиком, так что можно заранее сформировать order.
+				// zagidullin.ra: Но нужно написать метод (к примеру)ReserveIfAvailable на транзакциях.
 				FiguresStorage.Reserve(position.Type, position.Count);
 			}
 
 			var result = _orderStorage.Save(order);
-
-			// zagidullin.ra: А, если не ОК? 
+			
 			return new OkObjectResult(result.Result);
 		}
 	}
